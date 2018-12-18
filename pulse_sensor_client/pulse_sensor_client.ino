@@ -107,6 +107,8 @@ void setup() {
   timerAlarmWrite(timer, 1000, true);   // 1us * 1000 = 1ms => timer1 interrupt함수는 1ms 마다 동작  
   timerAlarmEnable(timer);
 
+  WiFi.disconnect(); 
+
   //wifi connecting 
   Serial.println("");
   Serial.println("WiFi Connecting to IP");
@@ -187,6 +189,8 @@ void loop() {
 //    Serial.print(", ");
 //    Serial.print(New_HeartBeatBPM);
 //    Serial.println("\n");
+
+//    client.stop();
 
     system_time_1ms = 0;
   }
