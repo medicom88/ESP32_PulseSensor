@@ -9,6 +9,14 @@
 #define AD_ROW_MAX  4096
 #define BPM_THRESHOLD 200
 
+#define _LED_PWM_GPIO   26
+#define _LED_GND_GPIO   25
+#define DUTY_CYCLE    178       //256 * 0.7 -1
+
+int freq = 1000;
+int ledChannel = 0;
+int resolution = 8;
+
 WiFiClient client;
 
 char ssid[30]     = "KeplerAP";
@@ -88,12 +96,16 @@ void PulseSensorFunc()
         His_HeartBeatBPM = New_HeartBeatBPM;
       }
       heartBeatCnt_1ms = 0;
+
+      ledcWrite(ledChannel, DUTY_CYCLE);
       
       onlyonce = 1;
     }
+    
   }
   else if(heartBeatAD_Data < Threshold_heartBeatAD_Data){
     onlyonce = 0;
+    ledcWrite(ledChannel, 0);
   }
 }
 
@@ -106,6 +118,14 @@ void setup() {
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, 1000, true);   // 1us * 1000 = 1ms => timer1 interrupt함수는 1ms 마다 동작  
   timerAlarmEnable(timer);
+
+  pinMode(_LED_PWM_GPIO, OUTPUT);
+  pinMode(_LED_GND_GPIO, OUTPUT);      
+  digitalWrite(_LED_PWM_GPIO, LOW); 
+  digitalWrite(_LED_GND_GPIO, LOW); 
+
+  ledcSetup(ledChannel, freq, resolution);
+  ledcAttachPin(_LED_PWM_GPIO, ledChannel);
 
   WiFi.disconnect(); 
 
